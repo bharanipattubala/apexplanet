@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>All-in-One Demo</title>
+  <style>
+    body { font-family: sans-serif; margin: 0; padding: 1rem; }
+    /* Responsive 2‑col -> 1‑col */
+    .columns { display: flex; gap: 1rem; }
+    .column { flex: 1; padding: 1rem; background: #f0f0f0; }
+    @media (max-width: 600px) {
+      .columns { flex-direction: column; }
+      body { font-size: 1.2rem; }
+    }
+
+    /* Carousel */
+    .carousel { position: relative; width: 100%; max-width: 400px; margin: 1rem auto; overflow: hidden; }
+    .slide { position: absolute; width: 100%; opacity: 0; transition: opacity 0.5s; }
+    .slide.active { opacity: 1; }
+
+    /* Joke section */
+    #joke { margin-top: 1rem; padding: 1rem; background: #eef; }
+  </style>
+</head>
+<body>
+
+  <h1>Responsive + Carousel + API Demo</h1>
+
+  <!-- Responsive columns -->
+  <div class="columns">
+    <div class="column">Column A</div>
+    <div class="column">Column B</div>
+  </div>
+
+  <!-- Carousel -->
+  <div class="carousel">
+    <img src="https://picsum.photos/id/1011/400/250" class="slide active">
+    <img src="https://picsum.photos/id/1025/400/250" class="slide">
+    <img src="https://picsum.photos/id/1035/400/250" class="slide">
+  </div>
+  <div style="text-align:center;">
+    <button id="prev">«Prev</button>
+    <button id="next">Next»</button>
+  </div>
+
+  <!-- Joke API -->
+  <div id="joke">Click the button to load a joke!</div>
+  <button id="load">Tell me a joke</button>
+
+  <script>
+    // Carousel JS
+    const slides = document.querySelectorAll('.slide');
+    let current = 0;
+    document.getElementById('next').onclick = () => {
+      slides[current].classList.remove('active');
+      current = (current + 1) % slides.length;
+      slides[current].classList.add('active');
+    };
+    document.getElementById('prev').onclick = () => {
+      slides[current].classList.remove('active');
+      current = (current - 1 + slides.length) % slides.length;
+      slides[current].classList.add('active');
+    };
+
+    // Fetch joke from API
+    document.getElementById('load').onclick = async () => {
+      try {
+        const res = await fetch('https://official-joke-api.appspot.com/random_joke');
+        if (!res.ok) throw new Error(res.status);
+        const data = await res.json();
+        document.getElementById('joke').textContent = data.setup + ' — ' + data.punchline;
+      } catch (e) {
+        document.getElementById('joke').textContent = 'Error: ' + e;
+      }
+    };
+  </script>
+</body>
+</html>
