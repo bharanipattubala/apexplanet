@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Simple E-commerce</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; line-height: 1.6; background: #f8f8f8; }
+    header { background: #333; color: #fff; padding: 1rem; text-align: center; }
+    .products { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; padding: 1rem; }
+    .card { background: #fff; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; }
+    .card h3 { margin: 0.5rem 0; }
+    .card button { background: #28a745; color: #fff; padding: 0.5rem 1rem; border: none; border-radius: 5px; cursor: pointer; }
+    .cart { position: fixed; right: 1rem; top: 5rem; background: #fff; padding: 1rem; width: 300px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+    .cart h4 { margin-bottom: 0.5rem; }
+    .cart-item { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+    footer { text-align: center; padding: 1rem; background: #333; color: #fff; margin-top: 2rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>SnapBuy</h1>
+  </header>
+
+  <main>
+    <div class="products" id="product-list"></div>
+  </main>
+
+  <div class="cart" id="cart">
+    <h4>Cart</h4>
+    <div id="cart-items"></div>
+    <strong>Total: $<span id="total">0</span></strong>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Mini Store</p>
+  </footer>
+
+  <script>
+    const products = [
+      { id: 1, name: "T-shirt", price: 100, image: "d1.jpeg" },
+      { id: 2, name: "Shoes", price: 550, image: "d2.jpeg" },
+      { id: 3, name: "Backpack", price: 350, image: "d3.jpeg"},
+      { id: 4, name: "Watch", price: 1750, image: "d4.jpeg" },
+    ];
+
+    const productList = document.getElementById("product-list");
+    const cartItems = document.getElementById("cart-items");
+    const totalDisplay = document.getElementById("total");
+
+    let cart = [];
+
+    function renderProducts() {
+      products.forEach(product => {
+        const card = document.createElement("div");
+        card.classList.add("card");
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" />
+          <h3>${product.name}</h3>
+          <p>$${product.price}</p>
+          <button onclick="addToCart(${product.id})">Add to Cart</button>
+        `;
+        productList.appendChild(card);
+      });
+    }
+
+    function addToCart(id) {
+      const product = products.find(p => p.id === id);
+      cart.push(product);
+      renderCart();
+    }
+
+    function renderCart() {
+      cartItems.innerHTML = "";
+      let total = 0;
+      cart.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.classList.add("cart-item");
+        div.innerHTML = `
+          <span>${item.name} - $${item.price}</span>
+          <button onclick="removeFromCart(${index})">X</button>
+        `;
+        cartItems.appendChild(div);
+        total += item.price;
+      });
+      totalDisplay.textContent = total;
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      renderCart();
+    }
+
+    renderProducts();
+  </script>
+</body>
+</html>
